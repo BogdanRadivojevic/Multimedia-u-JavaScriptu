@@ -2,6 +2,7 @@ const questions = [
     {
         id: 1,
         question: "Koji HTML element omogućava integraciju zvuka na web stranici?",
+        image: "assets/img/slika1.png",
         answers: [
             { id: 0, at: "a", text: "<video>", correct: false, },
             { id: 1, at: "b", text: "<audio>", correct: true },
@@ -213,19 +214,40 @@ function deleteCurrentAnswers() {
 function renderQuestionAndAnswers(currentIndex) {
     const cardTitle = document.querySelector("h5.card-title");
     const options = document.querySelector("ul.options");
+    const questionImageContainer = document.querySelector(".question-image");
 
+    // Prikaži tekst pitanja
     cardTitle.style.minHeight = 80;
     cardTitle.style.margin = 0;
     cardTitle.textContent = `${currentIndex + 1}. ${questions[currentIndex].question}`;
 
+    // Prikaži sliku ako postoji
+    if (questions[currentIndex].image) {
+        if (!questionImageContainer) {
+            const newImageContainer = document.createElement("div");
+            newImageContainer.classList.add("question-image", "text-center", "my-3");
+            const questionImage = document.createElement("img");
+            questionImage.src = questions[currentIndex].image;
+            questionImage.alt = "Pitanje slika";
+            questionImage.style.maxWidth = "100%";
+            newImageContainer.appendChild(questionImage);
+            cardTitle.insertAdjacentElement("afterend", newImageContainer);
+        } else {
+            const questionImage = questionImageContainer.querySelector("img");
+            questionImage.src = questions[currentIndex].image;
+        }
+    } else if (questionImageContainer) {
+        questionImageContainer.remove(); // Ukloni sliku ako ne postoji za ovo pitanje
+    }
+
+    // Prikaži odgovore
     questions[currentIndex].answers.forEach((answer) => {
         const optionItem = document.createElement("li");
         const optionRadioInput = document.createElement("input");
         const optionRadioLabel = document.createElement("label");
         const itemIndex = questions[currentIndex].id;
 
-        optionItem.classList.add("option-item");
-        optionItem.classList.add("form-check");
+        optionItem.classList.add("option-item", "form-check");
         optionItem.dataset.question = itemIndex;
         optionRadioInput.type = "radio";
         optionRadioInput.name = "answer";
@@ -341,14 +363,15 @@ function handleFinishButtonOnClick({ state }) {
     resultModalParagraph.classList.add("fst-italic", "fs-3", "text-center");
     resultModalParagraph.textContent = `Procenat uspešnosti: ${state.getResult()}%`;
 
+    
     resultModalLoader.src = `${base}/assets/img/spinner.gif`;
     resultModalLoader.classList.add(...imageClasses);
     resultModalLoader.style.minHeight = "200px";
 
     resultModalImage.src =
         state.getResult() >= 50
-            ? `${base}/assets/img/congrats.gif`
-            : `${base}/assets/img/babyknowle-memes.gif`;
+            ? `${base}/assets/img/congrats.webp`
+            : `${base}/assets/img/getSomeHelp.webp`;
     resultModalImage.classList.add(...imageClasses);
     resultModalImage.style.minHeight = "200px";
 
